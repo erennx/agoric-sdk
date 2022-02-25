@@ -428,7 +428,7 @@ const start = async zcf => {
     const rrId = reportingRoundId;
 
     let canSupersede = true;
-    if (_roundId !== 1n) {
+    if (_roundId > 1n) {
       canSupersede = supersedable(subtract(_roundId, 1), blockTimestamp);
     }
 
@@ -608,7 +608,9 @@ const start = async zcf => {
             oracleInstance,
             blockTimestamp,
           );
-          roundId = suggestedRound.queriedRoundId;
+          roundId = suggestedRound.eligibleForSpecificRound
+            ? suggestedRound.queriedRoundId
+            : add(suggestedRound.queriedRoundId, 1);
         } else {
           roundId = Nat(_roundIdRaw);
         }
@@ -678,7 +680,7 @@ const start = async zcf => {
           pushResult({
             roundId: _roundIdRaw,
             data: _submissionRaw,
-          });
+          }).catch(console.error);
         },
       };
 

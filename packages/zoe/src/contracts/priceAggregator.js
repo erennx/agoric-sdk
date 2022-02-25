@@ -34,7 +34,7 @@ const start = async zcf => {
   const unitIn = AmountMath.getValue(brandIn, unitAmountIn);
 
   /** @type {TimerService} */
-  const timer = rawTimer;
+  const timer = await rawTimer;
 
   /** @type {IssuerRecord & { mint: ERef<Mint> }} */
   let quoteKit;
@@ -83,12 +83,20 @@ const start = async zcf => {
     async wake(timestamp) {
       // Run all the queriers.
       const querierPs = [];
-      oracleRecords.forEach(({ querier }) => {
+      const samples = [];
+      oracleRecords.forEach(({ querier, lastSample }) => {
         if (querier) {
           querierPs.push(querier(timestamp));
         }
+        // Push result.
+        samples.push(lastSample);
       });
-      await Promise.all(querierPs);
+      if (!querierPs.length) {
+        // Only have push results, so publish them.
+        // eslint-disable-next-line no-use-before-define
+        querierPs.push(updateQuote(samples, timestamp));
+      }
+      await Promise.all(querierPs).catch(console.error);
     },
   });
   E(repeaterP).schedule(waker);
@@ -173,7 +181,6 @@ const start = async zcf => {
       { add, divide: floorDivide, isGTE },
     );
 
-    // console.error('found median', median, 'of', samples);
     if (median === undefined) {
       return;
     }
@@ -259,7 +266,7 @@ const start = async zcf => {
       assert(records.has(record), X`Oracle record is already deleted`);
 
       /** @type {OracleAdmin} */
-      const oracleAdmin = {
+      const oracleAdmin = Far('OracleAdmin', {
         async delete() {
           assert(records.has(record), X`Oracle record is already deleted`);
 
@@ -288,11 +295,11 @@ const start = async zcf => {
           // the median calculation.
           pushResult(result);
         },
-      };
+      });
 
       if (query === undefined) {
         // They don't want to be polled.
-        return harden(oracleAdmin);
+        return oracleAdmin;
       }
 
       let lastWakeTimestamp = 0n;
@@ -319,7 +326,7 @@ const start = async zcf => {
       await record.querier(now);
 
       // Return the oracle admin object.
-      return harden(oracleAdmin);
+      return oracleAdmin;
     },
   });
 
