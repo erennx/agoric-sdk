@@ -123,15 +123,15 @@
 /**
  * @typedef {{
  *   issuer: |
- *     'RUN' | 'BLD',
+ *     'RUN' | 'BLD' | 'Attestation',
  *   installation: |
  *     'contractGovernor' | 'committee' | 'noActionElectorate' | 'binaryVoteCounter' |
- *     'amm' | 'VaultFactory' | 'liquidate' | 'getRUN' |
+ *     'amm' | 'VaultFactory' | 'liquidate' | 'runStake' |
  *     'Pegasus',
  *   instance: |
  *     'economicCommittee' |
  *     'amm' | 'ammGovernor' | 'VaultFactory' | 'VaultFactoryGovernor' | 'liquidate' |
- *     'getRUN' | 'getRUNGovernor' |
+ *     'runStake' | 'runStakeGovernor' |
  *     'Treasury' |
  *     'Pegasus',
  *   uiConfig: |
@@ -194,7 +194,7 @@
  *     ammGovernorCreatorFacet: Producer<unknown>,
  *     chainTimerService: Producer<ERef<TimerService>>,
  *     economicCommitteeCreatorFacet: Producer<CommitteeElectorateCreatorFacet>,
- *     getRUNBundle: Producer<{ moduleFormat: string }>,
+ *     runStakeBundle: Producer<{ moduleFormat: string }>,
  *     ammBundle: Producer<SourceBundle>,
  *     vaultBundles: Producer<Record<string, SourceBundle>>,
  *     governanceBundles: Producer<Record<string, SourceBundle>>,
