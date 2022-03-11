@@ -1,4 +1,4 @@
-import objectInspectSources from '../src/object-inspect.js';
+import objectInspectSources from '../dist/src-object-inspect.js';
 
 // Ensure the object inspector is confined.
 const c = new Compartment();
