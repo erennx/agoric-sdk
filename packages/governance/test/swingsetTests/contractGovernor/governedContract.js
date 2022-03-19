@@ -36,14 +36,14 @@ const start = async (zcf, privateArgs) => {
     [CONTRACT_ELECTORATE]: ParamTypes.INVITATION,
   });
 
-  const { wrapPublicFacet, wrapCreatorFacet } = handleParamGovernance(
+  const { augmentPublicFacet, makeGovernorFacet } = handleParamGovernance(
     zcf,
     paramManager,
   );
 
   return {
-    publicFacet: wrapPublicFacet({}),
-    creatorFacet: wrapCreatorFacet({}),
+    publicFacet: augmentPublicFacet({}),
+    creatorFacet: makeGovernorFacet({}),
   };
 };
 
