@@ -1,7 +1,7 @@
 // @ts-check
 
 import { handleParamGovernance } from '../../../src/contractHelper.js';
-import { assertElectorateMatches, ParamTypes } from '../../../src/index.js';
+import { ParamTypes } from '../../../src/index.js';
 import { CONTRACT_ELECTORATE } from '../../../src/paramGovernance/governParam.js';
 import { makeParamManagerFromTerms } from '../../../src/paramGovernance/typedParamManager.js';
 
@@ -30,15 +30,11 @@ const makeParamTerms = (number, invitationAmount) => {
  * },
  * {initialPoserInvitation: Payment}>
  */
-// XXX passing full zcf and privateArgs simplifies the caller but isn't POLA
 const start = async (zcf, privateArgs) => {
   const paramManager = await makeParamManagerFromTerms(zcf, privateArgs, {
-    [MALLEABLE_NUMBER]: 'nat',
-    [CONTRACT_ELECTORATE]: 'invitation',
+    [MALLEABLE_NUMBER]: ParamTypes.NAT,
+    [CONTRACT_ELECTORATE]: ParamTypes.INVITATION,
   });
-
-  // ??? call this within makeParamManagerFromTerms ?
-  assertElectorateMatches(paramManager, zcf.getTerms().main);
 
   const { wrapPublicFacet, wrapCreatorFacet } = handleParamGovernance(
     zcf,
