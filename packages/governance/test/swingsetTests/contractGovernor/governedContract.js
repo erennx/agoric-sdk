@@ -3,7 +3,6 @@
 import { handleParamGovernance } from '../../../src/contractHelper.js';
 import { ParamTypes } from '../../../src/index.js';
 import { CONTRACT_ELECTORATE } from '../../../src/paramGovernance/governParam.js';
-import { makeParamManagerFromTerms } from '../../../src/paramGovernance/typedParamManager.js';
 
 const MALLEABLE_NUMBER = 'MalleableNumber';
 
@@ -31,14 +30,12 @@ const makeParamTerms = (number, invitationAmount) => {
  * {initialPoserInvitation: Payment}>
  */
 const start = async (zcf, privateArgs) => {
-  const paramManager = await makeParamManagerFromTerms(zcf, privateArgs, {
-    [MALLEABLE_NUMBER]: ParamTypes.NAT,
-    [CONTRACT_ELECTORATE]: ParamTypes.INVITATION,
-  });
-
-  const { augmentPublicFacet, makeGovernorFacet } = handleParamGovernance(
+  const { augmentPublicFacet, makeGovernorFacet } = await handleParamGovernance(
     zcf,
-    paramManager,
+    privateArgs,
+    {
+      [MALLEABLE_NUMBER]: ParamTypes.NAT,
+    },
   );
 
   return {

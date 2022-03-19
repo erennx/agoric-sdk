@@ -8,7 +8,6 @@ import { handleParamGovernance, ParamTypes } from '@agoric/governance';
 
 import { assertIssuerKeywords } from '@agoric/zoe/src/contractSupport/index.js';
 import { E } from '@endo/far';
-import { makeParamManagerFromTerms } from '@agoric/governance/src/paramGovernance/typedParamManager';
 import { makeAddPool } from './pool.js';
 import {
   makeMakeAddLiquidityInvitation,
@@ -65,7 +64,7 @@ const { quote: q, details: X } = assert;
  * getLiquidityIssuer, and getLiquiditySupply.
  *
  * This contract has two parameters (poolFee and protocolFee) that are
- * managed by governance. The contract calls `handleParamGovernance()` at
+ * managed by governance. The contract calls `facetHelpers()` at
  * startup, which allows a contractManager to call for votes that would change
  * the parameter values in a transparent way. When correctly set up, customers
  * with access to this contract's publicFacet can verify the connectivity, and
@@ -82,12 +81,12 @@ const { quote: q, details: X } = assert;
  * thereafter can be seen to only use the values provided by the
  * getter method returned by the paramManager.
  *
- * `handleParamGovernance()` adds several methods to the publicFacet of the
+ * `facetHelpers()` adds several methods to the publicFacet of the
  * contract, and bundles the privateFacet to ensure that governance
  * functionality is only accessible to the contractGovernor.
  *
  * The creatorFacet has one method (makeCollectFeesInvitation, which returns
- * collected fees to the creator). `handleParamGovernance()` adds internal
+ * collected fees to the creator). `facetHelpers()` adds internal
  * methods used by the contractGovernor. The contractGovernor then has access to
  * those internal methods, and reveals the original AMM creatorFacet to its own
  * creator.
@@ -123,8 +122,11 @@ const start = async (zcf, privateArgs) => {
   assertIssuerKeywords(zcf, ['Central']);
   assert(centralBrand !== undefined, X`centralBrand must be present`);
 
-  const [paramManager, centralDisplayInfo] = await Promise.all([
-    makeParamManagerFromTerms(zcf, privateArgs, {
+  const [
+    { augmentPublicFacet, makeGovernorFacet, params },
+    centralDisplayInfo,
+  ] = await Promise.all([
+    handleParamGovernance(zcf, privateArgs, {
       [POOL_FEE_KEY]: ParamTypes.NAT,
       [PROTOCOL_FEE_KEY]: ParamTypes.NAT,
     }),
@@ -137,11 +139,6 @@ const start = async (zcf, privateArgs) => {
     X`Central must be of kind ${q(AssetKind.NAT)}, not ${q(
       centralDisplayInfo.assetKind,
     )}`,
-  );
-
-  const { augmentPublicFacet, makeGovernorFacet } = handleParamGovernance(
-    zcf,
-    paramManager,
   );
 
   /** @type {WeakStore<Brand,XYKPool>} */
@@ -165,8 +162,8 @@ const start = async (zcf, privateArgs) => {
     centralBrand,
     timer,
     quoteIssuerKit,
-    paramManager.getProtocolFee,
-    paramManager.getPoolFee,
+    params.getProtocolFee,
+    params.getPoolFee,
     protocolSeat,
   );
   const getPoolAllocation = brand => {
@@ -192,8 +189,8 @@ const start = async (zcf, privateArgs) => {
         zcf,
         getPool(brandIn),
         getPool(brandOut),
-        paramManager.getProtocolFee,
-        paramManager.getPoolFee,
+        params.getProtocolFee,
+        params.getPoolFee,
         protocolSeat,
       );
     }
