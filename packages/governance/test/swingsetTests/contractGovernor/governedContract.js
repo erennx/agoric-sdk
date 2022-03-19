@@ -1,11 +1,7 @@
 // @ts-check
 
 import { handleParamGovernance } from '../../../src/contractHelper.js';
-import {
-  assertElectorateMatches,
-  makeParamManager,
-  ParamTypes,
-} from '../../../src/index.js';
+import { assertElectorateMatches, ParamTypes } from '../../../src/index.js';
 import { CONTRACT_ELECTORATE } from '../../../src/paramGovernance/governParam.js';
 import { makeParamManagerFromTerms } from '../../../src/paramGovernance/typedParamManager.js';
 
