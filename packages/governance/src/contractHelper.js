@@ -123,7 +123,6 @@ const facetHelpers = (zcf, paramManager) => {
  * main: GT,
  * }>} zcf
  * @param {Invitation} initialPoserInvitation
- * @param initialPoserInvitation
  * @param {Record<string, ParamType>} paramSpec
  */
 const handleParamGovernance = async (
