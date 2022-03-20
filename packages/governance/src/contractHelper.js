@@ -22,9 +22,7 @@ const { details: X, quote: q } = assert;
  *  used directly by the governed contract.
  *
  * @template T
- * @param {ZCF<{
- * electionManager: VoteOnParamChange,
- * governed: Record<string, ParamRecord> & {[CONTRACT_ELECTORATE]: ParamRecord<'invitation'>}
+ * @param {ZCF<GovernanceTerms<{}> & {
  * }>} zcf
  * @param {import('./paramGovernance/typedParamManager').TypedParamManager<T>} paramManager
  */
@@ -118,9 +116,7 @@ const facetHelpers = (zcf, paramManager) => {
  *  used directly by the governed contract.
  *
  * @template {Record<string, ParamRecord> & {[CONTRACT_ELECTORATE]: ParamRecord<'invitation'>}} GT Governed terms
- * @param {ZCF<{
- * electionManager: VoteOnParamChange,
- * governed: GT,
+ * @param {ZCF<GovernanceTerms<{}> & {
  * }>} zcf
  * @param {Invitation} initialPoserInvitation
  * @param {Record<string, ParamType>} paramSpec
