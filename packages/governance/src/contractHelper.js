@@ -122,13 +122,18 @@ const facetHelpers = (zcf, paramManager) => {
  * electionManager: VoteOnParamChange,
  * main: GT,
  * }>} zcf
- * @param {{initialPoserInvitation: Invitation}} privateArgs
+ * @param {Invitation} initialPoserInvitation
+ * @param initialPoserInvitation
  * @param {Record<string, ParamType>} paramSpec
  */
-const handleParamGovernance = async (zcf, privateArgs, paramSpec) => {
+const handleParamGovernance = async (
+  zcf,
+  initialPoserInvitation,
+  paramSpec,
+) => {
   const paramManager = await makeParamManagerFromTerms(
     zcf,
-    privateArgs,
+    initialPoserInvitation,
     paramSpec,
   );
 
