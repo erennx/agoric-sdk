@@ -219,7 +219,7 @@ const makeBootstrap = (argv, cb, vatPowers) => async (vats, devices) => {
     governed: {
       issuerKeywordRecord: {},
       terms: {
-        main: makeParamTerms(602214090000000000000000n, invitationValue),
+        governed: makeParamTerms(602214090000000000000000n, invitationValue),
       },
       privateArgs: { initialPoserInvitation },
     },

@@ -39,9 +39,10 @@ import { makeVaultParamManager, makeElectorateParamManager } from './params.js';
 const { details: X } = assert;
 
 /**
- * @param {ZCF<Record<string, any> &
- *  {electionManager: Instance,
- *   main: {Electorate: ParamRecord<'invitation'>},
+ * @param {ZCF<GovernanceTerms<{}> & {
+ *   ammPublicFacet: unknown,
+ *   liquidationInstall: unknown,
+ *   loanTimingParams: {ChargingPeriod: ParamRecord<'nat'>, RecordingPeriod: ParamRecord<'nat'>},
  *   timerService: TimerService,
  *   priceAuthority: ERef<PriceAuthority>}>} zcf
  * @param {{feeMintAccess: FeeMintAccess, initialPoserInvitation: Invitation}} privateArgs
@@ -53,7 +54,7 @@ export const start = async (zcf, privateArgs) => {
     timerService,
     liquidationInstall,
     electionManager,
-    main: governedTerms,
+    governed: governedTerms,
     loanTimingParams,
   } = zcf.getTerms();
 

@@ -24,13 +24,13 @@ const { details: X, quote: q } = assert;
  * @template T
  * @param {ZCF<{
  * electionManager: VoteOnParamChange,
- * main: Record<string, ParamRecord> & {[CONTRACT_ELECTORATE]: ParamRecord<'invitation'>}
+ * governed: Record<string, ParamRecord> & {[CONTRACT_ELECTORATE]: ParamRecord<'invitation'>}
  * }>} zcf
  * @param {import('./paramGovernance/typedParamManager').TypedParamManager<T>} paramManager
  */
 const facetHelpers = (zcf, paramManager) => {
   const terms = zcf.getTerms();
-  const governedParams = terms.main;
+  const governedParams = terms.governed;
   assert(
     keyEQ(governedParams, paramManager.getParams()),
     X`Terms must include ${q(paramManager.getParams())}, but were ${q(
@@ -120,7 +120,7 @@ const facetHelpers = (zcf, paramManager) => {
  * @template {Record<string, ParamRecord> & {[CONTRACT_ELECTORATE]: ParamRecord<'invitation'>}} GT Governed terms
  * @param {ZCF<{
  * electionManager: VoteOnParamChange,
- * main: GT,
+ * governed: GT,
  * }>} zcf
  * @param {Invitation} initialPoserInvitation
  * @param {Record<string, ParamType>} paramSpec
