@@ -2296,3 +2296,52 @@ test('mutable liquidity triggers and interest sensitivity', async t => {
   t.is(aliceUpdate.value.vaultState, Phase.ACTIVE);
   t.is(bobUpdate.value.vaultState, Phase.LIQUIDATED);
 });
+
+test('addVaultType: invalid args do not modify state', async t => {
+  const {
+    aethKit: { mint: aethMint, issuer: aethIssuer, brand: aethBrand },
+  } = setupAssets();
+  const aethInitialLiquidity = AmountMath.make(aethBrand, 300n);
+  const aethLiquidity = {
+    proposal: aethInitialLiquidity,
+    payment: aethMint.mintPayment(aethInitialLiquidity),
+  };
+
+  const secondsPerDay = SECONDS_PER_YEAR / 365n;
+  const loanTiming = {
+    chargingPeriod: secondsPerDay * 7n,
+    recordingPeriod: secondsPerDay * 7n,
+  };
+  // charge interest on every tick
+  const manualTimer = buildManualTimer(console.log, 0n, secondsPerDay * 7n);
+  const services = await setupServices(
+    loanTiming,
+    [10n, 7n],
+    AmountMath.make(aethBrand, 1n),
+    aethBrand,
+    {
+      committeeName: 'TheCabal',
+      committeeSize: 5,
+    },
+    manualTimer,
+    secondsPerDay * 7n,
+    aethLiquidity,
+    500n,
+    aethIssuer,
+  );
+
+  const { vaultFactory } = services.vaultFactory;
+
+  const kw = 'AAAAAAAAAAAAAAAAA';
+  await E(vaultFactory)
+    // @ts-ignore bad args on purpose for test
+    .addVaultType(aethIssuer, kw, null)
+    .then(oops => t.fail(`${oops}`))
+    .catch(reason1 =>
+      t.throwsAsync(
+        // @ts-ignore bad args on purpose for test
+        E(vaultFactory).addVaultType(aethIssuer, kw, null),
+        { message: reason1.message },
+      ),
+    );
+});
