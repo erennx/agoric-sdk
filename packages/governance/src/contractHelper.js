@@ -115,21 +115,21 @@ const facetHelpers = (zcf, paramManager) => {
  *  parameter values, and the governance guarantees only hold if they're not
  *  used directly by the governed contract.
  *
- * @template {Record<string, ParamRecord> & {[CONTRACT_ELECTORATE]: ParamRecord<'invitation'>}} GT Governed terms
- * @param {ZCF<GovernanceTerms<{}> & {
- * }>} zcf
+ * @template {import('./paramGovernance/typedParamManager').ParamTypesMap} M Map of types of custom governed terms
+ * @template {Record<string, ParamRecord>} CGT Custom governed terms
+ * @param {ZCF<GovernanceTerms<CGT>>} zcf
  * @param {Invitation} initialPoserInvitation
- * @param {Record<string, ParamType>} paramSpec
+ * @param {M} paramTypesMap
  */
 const handleParamGovernance = async (
   zcf,
   initialPoserInvitation,
-  paramSpec,
+  paramTypesMap,
 ) => {
   const paramManager = await makeParamManagerFromTerms(
     zcf,
     initialPoserInvitation,
-    paramSpec,
+    paramTypesMap,
   );
 
   return facetHelpers(zcf, paramManager);

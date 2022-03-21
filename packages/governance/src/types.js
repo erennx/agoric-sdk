@@ -62,7 +62,7 @@
  * Terms a contract must provide in order to be governed.
  *
  * @template {Record<string, ParamRecord>} T Governed parameters of contract
- * @typedef {{ electionManager: VoteOnParamChange, governed: T & { Electorate: ParamRecord<'invitation'> } } } GovernanceTerms<T>
+ * @typedef {{ electionManager: Instance, governed: T & { Electorate: ParamRecord<'invitation'> } } } GovernanceTerms<T>
  */
 
 /**
@@ -501,7 +501,7 @@
  *
  * The creatorFacet for the governed contract that will be passed to the
  * responsible party. It does not have access to the paramManager.
- * @property {() => VoteOnParamChange} getContractGovernor
+ * @property {() => Instance} getContractGovernor
  */
 
 /**
@@ -529,7 +529,7 @@
 /**
  * @typedef GovernedPublicFacetMethods
  * @property {() => Subscription<ParamRecord>} getSubscription
- * @property {() => VoteOnParamChange} getContractGovernor
+ * @property {() => Instance} getContractGovernor
  * @property {GetParams} getGovernedParams - get descriptions of
  *   all the governed parameters
  * @property {(name: string) => Amount} getAmount
