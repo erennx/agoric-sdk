@@ -1,11 +1,11 @@
 // @ts-check
 import { E, Far } from '@endo/far';
-import { AssetKind } from '@agoric/ertp';
+import { AssetKind, makeIssuerKit } from '@agoric/ertp';
 
 import { Nat } from '@agoric/nat';
 import { makeNameHubKit } from '../nameHub.js';
 
-import { feeIssuerConfig } from './utils.js';
+import { ORACLE_PRICE_BRAND_NAME, feeIssuerConfig } from './utils.js';
 
 // TODO/TECHDEBT: move to run-protocol?
 const Tokens = harden({
@@ -97,6 +97,23 @@ export const buildZoe = async ({
   ]);
 };
 harden(buildZoe);
+
+/**
+ * Create inert brands (no mint or issuer) referred to by price oracles.
+ *
+ * @param {BootstrapPowers} powers
+ */
+export const makeOracleBrands = async ({
+  oracleBrand: { produce: oracleBrandProduce },
+}) => {
+  const { brand } = makeIssuerKit(
+    ORACLE_PRICE_BRAND_NAME,
+    AssetKind.NAT,
+    harden({ decimalPlaces: 6 }),
+  );
+  oracleBrandProduce[ORACLE_PRICE_BRAND_NAME].resolve(brand);
+};
+harden(makeOracleBrands);
 
 /**
  * TODO: rename this to getBoard?

@@ -122,8 +122,6 @@
 
 /**
  * @typedef {{
- *   brand: |
- *     'RUN' | 'BLD' | 'USD',
  *   issuer: |
  *     'RUN' | 'BLD',
  *   installation: |
@@ -136,6 +134,8 @@
  *     'getRUN' | 'getRUNGovernor' |
  *     'Treasury' |
  *     'Pegasus',
+ *   oracleBrand: |
+ *     import('./utils').ORACLE_PRICE_BRAND_NAME,
  *   uiConfig: |
  *     'VaultFactory' |
  *     'Treasury' // compat.
@@ -147,8 +147,12 @@
  *     consume: Record<WellKnownName['issuer'], Promise<Issuer>>,
  *   },
  *   brand: {
- *     produce: Record<WellKnownName['brand'], Producer<Brand>>,
- *     consume: Record<WellKnownName['brand'], Promise<Brand>>,
+ *     produce: Record<WellKnownName['issuer'], Producer<Brand>>,
+ *     consume: Record<WellKnownName['issuer'], Promise<Brand>>,
+ *   },
+ *   oracleBrand: {
+ *     produce: Record<WellKnownName['oracleBrand'], Producer<Brand>>,
+ *     consume: Record<WellKnownName['oracleBrand'], Promise<Brand>>,
  *   },
  *   installation:{
  *     produce: Record<WellKnownName['installation'], Producer<Installation>>,
