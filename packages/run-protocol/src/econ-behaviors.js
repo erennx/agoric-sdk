@@ -445,11 +445,6 @@ export const startRewardDistributor = async ({
 harden(startRewardDistributor);
 
 /**
- * @typedef { import('@endo/eventual-send/').Unpromise<T> } Unpromise<T>
- * @template T
- */
-
-/**
  * TODO: refactor vats/core/types.js like this
  *
  * @template T
@@ -476,7 +471,7 @@ harden(startRewardDistributor);
  * @param {bigint} config.chargingPeriod
  * @param {bigint} config.recordingPeriod
  * @typedef {[bigint, bigint]} Rational
- * @typedef {Unpromise<ReturnType<typeof import('./runStake/runStake.js').start>>} StartRunStake
+ * @typedef {Awaited<ReturnType<typeof import('./runStake/runStake.js').start>>} StartRunStake
  */
 export const startRunStake = async (
   {
