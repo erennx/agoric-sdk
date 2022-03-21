@@ -21,7 +21,7 @@ import '@agoric/zoe/src/contracts/exported.js';
 import { E } from '@endo/eventual-send';
 import '@agoric/governance/src/exported';
 
-import { makeScalarMap } from '@agoric/store';
+import { fit, M, makeScalarMap } from '@agoric/store';
 import {
   assertProposalShape,
   getAmountOut,
@@ -108,6 +108,24 @@ export const start = async (zcf, privateArgs) => {
 
   /** @type {AddVaultType} */
   const addVaultType = async (collateralIssuer, collateralKeyword, rates) => {
+    const amountPattern = { brand: M.remotable(), value: M.any() };
+    const ratioPattern = {
+      numerator: amountPattern,
+      denominator: amountPattern,
+    };
+    fit(
+      [collateralIssuer, collateralKeyword, rates],
+      harden([
+        M.remotable(),
+        M.string(),
+        {
+          liquidationMargin: ratioPattern,
+          interestRate: ratioPattern,
+          loanFee: ratioPattern,
+        },
+      ]),
+    );
+
     await zcf.saveIssuer(collateralIssuer, collateralKeyword);
     const collateralBrand = zcf.getBrandForIssuer(collateralIssuer);
     // We create only one vault per collateralType.
