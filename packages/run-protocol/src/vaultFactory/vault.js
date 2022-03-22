@@ -17,7 +17,7 @@ import { Far } from '@endo/marshal';
 import { makeTracer } from '../makeTracer.js';
 import { calculateCurrentDebt, reverseInterest } from '../interest-math.js';
 import { makeVaultKit } from './vaultKit.js';
-import { applyDelta, assertOnlyKeys, transfer } from '../contractSupport.js';
+import { addSubtract, assertOnlyKeys, transfer } from '../contractSupport.js';
 
 const { details: X, quote: q } = assert;
 
@@ -432,7 +432,7 @@ export const makeInnerVault = (
   const loanFee = (currentDebt, giveAmount, wantAmount) => {
     const fee = ceilMultiplyBy(wantAmount, manager.getLoanFee());
     const toMint = AmountMath.add(wantAmount, fee);
-    const newDebt = applyDelta(currentDebt, toMint, giveAmount);
+    const newDebt = addSubtract(currentDebt, toMint, giveAmount);
     return { newDebt, toMint, fee };
   };
 
@@ -493,7 +493,7 @@ export const makeInnerVault = (
     const giveColl = proposal.give.Collateral || emptyCollateral;
     const wantColl = proposal.want.Collateral || emptyCollateral;
 
-    const newCollateralPre = applyDelta(collateralPre, giveColl, wantColl);
+    const newCollateralPre = addSubtract(collateralPre, giveColl, wantColl);
     // max debt supported by current Collateral as modified by proposal
     const maxDebtPre = await maxDebtFor(newCollateralPre);
     assert(
@@ -506,7 +506,7 @@ export const makeInnerVault = (
     // Get new balances after calling the priceAuthority, so we can compare
     // to the debt limit based on the new values.
     const collateral = getCollateralAllocated(vaultSeat);
-    const newCollateral = applyDelta(collateral, giveColl, wantColl);
+    const newCollateral = addSubtract(collateral, giveColl, wantColl);
 
     const debt = getCurrentDebt();
     const giveRUN = AmountMath.min(proposal.give.RUN || emptyDebt, debt);
