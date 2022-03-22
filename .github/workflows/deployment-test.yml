@@ -5,6 +5,7 @@ on:
   # packages/deployment/scripts/start-deployment-test.sh <BRANCH-OR-TAG>
   workflow_dispatch:
   # Otherwise, run on default branch.
+  pull_request: # TODO Remove
   push:
     branches: [master] # $default-branch
 
