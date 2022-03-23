@@ -734,6 +734,11 @@ test('GC syscall.dropImports', async t => {
   t.falsy(wr.deref());
 
   // first it will check that there are no VO's holding onto it
+  t.deepEqual(log.shift(), {
+    type: 'vatstoreSet',
+    key: 'idCounters',
+    value: '{"collectionID":2,"exportID":9}',
+  });
   const l2 = log.shift();
   t.deepEqual(l2, {
     type: 'vatstoreGet',
@@ -1128,6 +1133,11 @@ test('GC dispatch.dropExports', async t => {
     type: 'resolve',
     resolutions: [[rp1, false, capdataOneSlot(ex1)]],
   });
+  t.deepEqual(log.shift(), {
+    type: 'vatstoreSet',
+    key: 'idCounters',
+    value: '{"collectionID":2,"exportID":10}',
+  });
   t.deepEqual(log, []);
 
   // the exported Remotable should be held in place by exportedRemotables
@@ -1189,6 +1199,11 @@ test('GC dispatch.retireExports inhibits syscall.retireExports', async t => {
   t.deepEqual(l1, {
     type: 'resolve',
     resolutions: [[rp1, false, capdataOneSlot(ex1)]],
+  });
+  t.deepEqual(log.shift(), {
+    type: 'vatstoreSet',
+    key: 'idCounters',
+    value: '{"collectionID":2,"exportID":10}',
   });
   t.deepEqual(log, []);
 

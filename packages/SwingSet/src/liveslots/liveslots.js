@@ -294,8 +294,6 @@ function build(
   const disavowalError = harden(Error(`this Presence has been disavowed`));
 
   const importedPromisesByPromiseID = new Map(); // vpid -> { resolve, reject }
-  let nextExportID = 1;
-  let nextPromiseID = 5;
 
   function makeImportedPresence(slot, iface = `Alleged: presence ${slot}`) {
     // Called by convertSlotToVal for type=object (an `o-NN` reference). We
@@ -438,6 +436,34 @@ function build(
     return Remotable(iface);
   }
 
+  let idCounters;
+  let idCountersAreDirty = false;
+
+  function allocateNextID(name, initialValue = 1) {
+    if (!idCounters) {
+      const raw = syscall.vatstoreGet('idCounters');
+      if (raw) {
+        idCounters = JSON.parse(raw);
+      } else {
+        idCounters = {};
+      }
+    }
+    if (!idCounters[name]) {
+      idCounters[name] = initialValue;
+    }
+    const result = idCounters[name];
+    idCounters[name] += 1;
+    idCountersAreDirty = true;
+    return result;
+  }
+
+  function flushIDCounters() {
+    if (idCountersAreDirty) {
+      syscall.vatstoreSet('idCounters', JSON.stringify(idCounters));
+      idCountersAreDirty = false;
+    }
+  }
+
   // TODO: fix awkward non-orthogonality: allocateExportID() returns a number,
   // allocatePromiseID() returns a slot, exportPromise() uses the slot from
   // allocatePromiseID(), exportPassByPresence() generates a slot itself using
@@ -446,14 +472,15 @@ function build(
   // use a slot from the corresponding allocateX
 
   function allocateExportID() {
-    const exportID = nextExportID;
-    nextExportID += 1;
-    return exportID;
+    return allocateNextID('exportID', 1);
+  }
+
+  function allocateCollectionID() {
+    return allocateNextID('collectionID', 1);
   }
 
   function allocatePromiseID() {
-    const promiseID = nextPromiseID;
-    nextPromiseID += 1;
+    const promiseID = allocateNextID('promiseID', 5);
     return makeVatSlot('promise', true, promiseID);
   }
 
@@ -539,6 +566,7 @@ function build(
     syscall,
     vrm,
     allocateExportID,
+    allocateCollectionID,
     // eslint-disable-next-line no-use-before-define
     convertValToSlot,
     unmeteredConvertSlotToVal,
@@ -1257,6 +1285,7 @@ function build(
   const unmeteredDispatch = meterControl.unmetered(dispatchToUserspace);
 
   async function bringOutYourDead() {
+    flushIDCounters();
     vom.flushCache();
     await gcTools.gcAndFinalize();
     const doMore = await scanForDeadObjects();

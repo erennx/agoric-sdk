@@ -47,6 +47,7 @@ function validateCreateBaggage(v, idx) {
 
 function validateSetup(v) {
   validate(v, matchVatstoreGet('baggageID', NONE));
+  validate(v, matchVatstoreGet('idCounters', NONE));
   validate(v, matchVatstoreGet('storeKindIDTable', NONE));
   validate(
     v,
@@ -80,5 +81,6 @@ test.serial('exercise baggage', async t => {
   validate(v, matchVatstoreGet('vc.1.|entryCount', '1'));
   validate(v, matchVatstoreSet('vc.1.|entryCount', '2'));
   validateReturned(v, rp);
+  validate(v, matchVatstoreSet('idCounters'));
   validateDone(v);
 });
