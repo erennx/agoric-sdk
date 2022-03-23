@@ -101,7 +101,7 @@ export const makeVaultManager = (
    * It should be set only once but it's a `let` because it can't be set until after the
    * definition of reschedulePriceCheck, which refers to sortedVaultKits
    *
-   * @type {ReturnType<typeof makePrioritizedVaults>=}
+   * @type {ReturnType<typeof makePrioritizedVaults> | undefined}
    */
   // XXX misleading mutability and confusing flow control; could be refactored with a listener
   let prioritizedVaults;
@@ -110,7 +110,7 @@ export const makeVaultManager = (
   /** @type {MapStore<string, InnerVault>} */
   const vaultsToLiquidate = makeScalarBigMapStore('vaultsToLiquidate');
 
-  /** @type {MutableQuote=} */
+  /** @type {MutableQuote | undefined} */
   let outstandingQuote;
   /** @type {Amount<'nat'>} */
   let totalDebt = AmountMath.makeEmpty(debtBrand, 'nat');

@@ -55,7 +55,7 @@ export const makePrioritizedVaults = reschedulePriceCheck => {
   // current high-water mark fires, we reschedule at the new (presumably
   // lower) rate.
   // Without this we'd be calling reschedulePriceCheck() unnecessarily
-  /** @type {Ratio=} */
+  /** @type {Ratio | undefined} */
   let oracleQueryThreshold;
 
   // Check if this ratio of debt to collateral would be the highest known. If
@@ -76,7 +76,7 @@ export const makePrioritizedVaults = reschedulePriceCheck => {
 
   /**
    *
-   * @returns {Ratio=} actual debt over collateral
+   * @returns {Ratio | undefined} actual debt over collateral
    */
   const firstDebtRatio = () => {
     if (vaults.getSize() === 0) {
