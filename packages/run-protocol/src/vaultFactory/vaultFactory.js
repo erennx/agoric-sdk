@@ -39,12 +39,18 @@ import { makeVaultParamManager, makeElectorateParamManager } from './params.js';
 const { details: X } = assert;
 
 /**
- * @param {ZCF<Record<string, any> &
- *  {electionManager: Instance,
- *   main: {Electorate: ParamRecord<'invitation'>},
- *   timerService: TimerService,
- *   priceAuthority: ERef<PriceAuthority>}>} zcf
- * @param {{feeMintAccess: FeeMintAccess, initialPoserInvitation: Invitation}} privateArgs
+ * @param {ZCF<
+ *   Record<string, any> & {
+ *     electionManager: Instance;
+ *     main: { Electorate: ParamRecord<'invitation'> };
+ *     timerService: TimerService;
+ *     priceAuthority: ERef<PriceAuthority>;
+ *   }
+ * >} zcf
+ * @param {{
+ *   feeMintAccess: FeeMintAccess;
+ *   initialPoserInvitation: Invitation;
+ * }} privateArgs
  */
 export const start = async (zcf, privateArgs) => {
   const {
@@ -78,8 +84,8 @@ export const start = async (zcf, privateArgs) => {
   const { zcfSeat: rewardPoolSeat } = zcf.makeEmptySeatKit();
 
   /**
-   * We provide an easy way for the vaultManager to add rewards to
-   * the rewardPoolSeat, without directly exposing the rewardPoolSeat to them.
+   * We provide an easy way for the vaultManager to add rewards to the
+   * rewardPoolSeat, without directly exposing the rewardPoolSeat to them.
    *
    * @type {ReallocateWithFee}
    */
@@ -98,12 +104,12 @@ export const start = async (zcf, privateArgs) => {
     }
   };
 
-  /** @type {Store<Brand,VaultManager>} */
+  /** @type {Store<Brand, VaultManager>} */
   const collateralTypes = makeScalarMap('brand');
 
   const zoe = zcf.getZoeService();
 
-  /** @type { Store<Brand, import('./params.js').VaultParamManager> } */
+  /** @type {Store<Brand, import('./params.js').VaultParamManager>} */
   const vaultParamManagers = makeScalarMap('brand');
 
   /** @type {AddVaultType} */

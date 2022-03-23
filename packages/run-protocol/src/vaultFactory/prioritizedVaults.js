@@ -11,7 +11,6 @@ import { toVaultKey } from './storeUtils.js';
 /** @typedef {import('./vault').InnerVault} InnerVault */
 
 /**
- *
  * @param {Amount<'nat'>} debtAmount
  * @param {Amount<'nat'>} collateralAmount
  * @returns {Ratio}
@@ -27,7 +26,6 @@ const calculateDebtToCollateral = (debtAmount, collateralAmount) => {
 };
 
 /**
- *
  * @param {InnerVault} vault
  * @returns {Ratio}
  */
@@ -37,14 +35,14 @@ export const currentDebtToCollateral = vault =>
     vault.getCollateralAmount(),
   );
 
-/** @typedef {{debtToCollateral: Ratio, vault: InnerVault}} VaultRecord */
+/** @typedef {{ debtToCollateral: Ratio; vault: InnerVault }} VaultRecord */
 
 /**
- * InnerVaults, ordered by their liquidation ratio so that all the
- * vaults below a threshold can be quickly found and liquidated.
+ * InnerVaults, ordered by their liquidation ratio so that all the vaults below
+ * a threshold can be quickly found and liquidated.
  *
  * @param {() => void} reschedulePriceCheck called when there is a new
- * least-collateralized vault
+ *   least-collateralized vault
  */
 export const makePrioritizedVaults = reschedulePriceCheck => {
   const vaults = makeOrderedVaultStore();
@@ -74,10 +72,7 @@ export const makePrioritizedVaults = reschedulePriceCheck => {
     }
   };
 
-  /**
-   *
-   * @returns {Ratio | undefined} actual debt over collateral
-   */
+  /** @returns {Ratio | undefined} actual debt over collateral */
   const firstDebtRatio = () => {
     if (vaults.getSize() === 0) {
       return undefined;
@@ -112,7 +107,6 @@ export const makePrioritizedVaults = reschedulePriceCheck => {
   };
 
   /**
-   *
    * @param {Amount<'nat'>} oldDebt
    * @param {Amount<'nat'>} oldCollateral
    * @param {string} vaultId
@@ -123,7 +117,6 @@ export const makePrioritizedVaults = reschedulePriceCheck => {
   };
 
   /**
-   *
    * @param {VaultId} vaultId
    * @param {InnerVault} vault
    */
