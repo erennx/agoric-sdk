@@ -650,13 +650,13 @@ export function makeCollectionManager(
   }
 
   /**
-   * Produce a *scalar* big map: keys can only be atomic values, primitives, or
+   * Produce a _scalar_ big map: keys can only be atomic values, primitives, or
    * remotables.
    *
    * @template K,V
-   * @param {string} [label='map'] - diagnostic label for the store
-   * @param {StoreOptions=} options
-   * @returns {MapStore<K,V>}
+   * @param {string} [label='map'] - Diagnostic label for the store. Default is `'map'`
+   * @param {StoreOptions} [options]
+   * @returns {MapStore<K, V>}
    */
   function makeScalarBigMapStore(
     label = 'map',
@@ -692,13 +692,14 @@ export function makeCollectionManager(
   }
 
   /**
-   * Produce a *scalar* weak big map: keys can only be atomic values,
+   * Produce a _scalar_ weak big map: keys can only be atomic values,
    * primitives, or remotables.
    *
    * @template K,V
-   * @param {string} [label='weakMap'] - diagnostic label for the store
-   * @param {StoreOptions=} options
-   * @returns {WeakMapStore<K,V>}
+   * @param {string} [label='weakMap'] - Diagnostic label for the store. Default
+   *   is `'weakMap'`
+   * @param {StoreOptions} [options]
+   * @returns {WeakMapStore<K, V>}
    */
   function makeScalarBigWeakMapStore(
     label = 'weakMap',
@@ -719,12 +720,12 @@ export function makeCollectionManager(
   }
 
   /**
-   * Produce a *scalar* big set: keys can only be atomic values, primitives, or
+   * Produce a _scalar_ big set: keys can only be atomic values, primitives, or
    * remotables.
    *
    * @template K
-   * @param {string} [label='set'] - diagnostic label for the store
-   * @param {StoreOptions=} options
+   * @param {string} [label='set'] - Diagnostic label for the store. Default is `'set'`
+   * @param {StoreOptions} [options]
    * @returns {SetStore<K>}
    */
   function makeScalarBigSetStore(
@@ -744,12 +745,13 @@ export function makeCollectionManager(
   }
 
   /**
-   * Produce a *scalar* weak big set: keys can only be atomic values,
+   * Produce a _scalar_ weak big set: keys can only be atomic values,
    * primitives, or remotables.
    *
    * @template K
-   * @param {string} [label='weakSet'] - diagnostic label for the store
-   * @param {StoreOptions=} options
+   * @param {string} [label='weakSet'] - Diagnostic label for the store. Default
+   *   is `'weakSet'`
+   * @param {StoreOptions} [options]
    * @returns {WeakSetStore<K>}
    */
   function makeScalarBigWeakSetStore(

@@ -12,8 +12,8 @@ const DEFAULT_CHAIN_CONFIG = 'https://testnet.agoric.com/network-config';
 
 /**
  * @param {string} basedir
- * @param {string=} chainConfig
- * @param {boolean} [force=false]
+ * @param {string} [chainConfig]
+ * @param {boolean} [force=false] Default is `false`
  */
 async function addChain(basedir, chainConfig, force = false) {
   let actualConfig = chainConfig;
