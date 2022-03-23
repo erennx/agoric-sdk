@@ -537,7 +537,6 @@ export const startRunStake = async (
       E(E(zoe).getInvitationIssuer()).getAmountOf(poserInvitationP),
     ]);
 
-  // t.log({ electorateCreatorFacet, electorateInstance });
   const runStakeTerms = makeRunStakeTerms(
     {
       timerService: timer,
