@@ -8,8 +8,8 @@ import {
   compareRank,
   M,
   zeroPad,
-  makeEncodeKey,
-  makeDecodeKey,
+  makeEncodePassable,
+  makeDecodePassable,
 } from '@agoric/store';
 import { Far, passStyleOf } from '@endo/marshal';
 import { parseVatSlot } from '../lib/parseVatSlots.js';
@@ -152,12 +152,22 @@ export function makeCollectionManager(
       return `r${ordinalTag}:${convertValToSlot(remotable)}`;
     };
 
-    const encodeKey = makeEncodeKey(encodeRemotable);
+    // `makeEncodePassable` has three named options:
+    // `encodeRemotable`, `encodeError`, and `encodePromise`.
+    // Those which are omitted default to a function that always throws.
+    // So by omitting `encodeError` and `encodePromise`, we know that
+    // the resulting function will encode only `Key` arguments.
+    const encodeKey = makeEncodePassable({ encodeRemotable });
 
     const decodeRemotable = encodedKey =>
       convertSlotToVal(encodedKey.substring(BIGINT_TAG_LEN + 2));
 
-    const decodeKey = makeDecodeKey(decodeRemotable);
+    // `makeDecodePassable` has three named options:
+    // `decodeRemotable`, `decodeError`, and `decodePromise`.
+    // Those which are omitted default to a function that always throws.
+    // So by omitting `decodeError` and `decodePromise`, we know that
+    // the resulting function will decode only to `Key` results.
+    const decodeKey = makeDecodePassable({ decodeRemotable });
 
     function generateOrdinal(remotable) {
       const nextOrdinal = Number.parseInt(
@@ -664,6 +674,23 @@ export function makeCollectionManager(
     return store;
   }
 
+  function provideBaggage() {
+    let baggageID = syscall.vatstoreGet('baggageID');
+    if (baggageID) {
+      return convertSlotToVal(baggageID);
+    } else {
+      const baggage = makeScalarBigMapStore('baggage', {
+        keySchema: M.string(),
+        durable: true,
+      });
+      baggageID = convertValToSlot(baggage);
+      syscall.vatstoreSet('baggageID', baggageID);
+      // artificially increment the baggage's refcount so it never gets GC'd
+      vrm.addReachableVref(baggageID);
+      return baggage;
+    }
+  }
+
   /**
    * Produce a *scalar* weak big map: keys can only be atomic values,
    * primitives, or remotables.
@@ -788,6 +815,7 @@ export function makeCollectionManager(
     makeScalarBigWeakMapStore,
     makeScalarBigSetStore,
     makeScalarBigWeakSetStore,
+    provideBaggage,
     testHooks,
   });
 }
