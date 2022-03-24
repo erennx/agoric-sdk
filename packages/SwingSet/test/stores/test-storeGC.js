@@ -465,8 +465,8 @@ function validateCreateHolder(v, idx) {
 }
 
 function validateInit(v) {
-  validate(v, matchVatstoreGet('baggageID', NONE));
   validate(v, matchVatstoreGet('idCounters', NONE));
+  validate(v, matchVatstoreGet('baggageID', NONE));
   validate(v, matchVatstoreGet('storeKindIDTable', NONE));
   validate(
     v,

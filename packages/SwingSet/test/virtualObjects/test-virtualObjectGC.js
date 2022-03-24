@@ -460,8 +460,8 @@ function validateCreateBaggage(v, idx) {
 }
 
 function validateSetup(v) {
-  validate(v, matchVatstoreGet('baggageID', NONE));
   validate(v, matchVatstoreGet('idCounters', NONE));
+  validate(v, matchVatstoreGet('baggageID', NONE));
   validate(v, matchVatstoreGet('storeKindIDTable', NONE));
   validate(
     v,

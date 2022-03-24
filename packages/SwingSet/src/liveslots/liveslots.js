@@ -439,7 +439,7 @@ function build(
   let idCounters;
   let idCountersAreDirty = false;
 
-  function allocateNextID(name, initialValue = 1) {
+  function initializeIDCounters() {
     if (!idCounters) {
       const raw = syscall.vatstoreGet('idCounters');
       if (raw) {
@@ -447,6 +447,18 @@ function build(
       } else {
         idCounters = {};
       }
+    }
+  }
+
+  function allocateNextID(name, initialValue = 1) {
+    if (!idCounters) {
+      // Normally `initializeIDCounters` would be called from startVat, but some
+      // tests bypass that so this is a backstop.  Note that the invocation from
+      // startVat is there to make vatStore access patterns a bit more
+      // consistent from one vat to another, principally as a confusion
+      // reduction measure in service of debugging; it is not a correctness
+      // issue.
+      initializeIDCounters();
     }
     if (!idCounters[name]) {
       idCounters[name] = initialValue;
@@ -1192,6 +1204,7 @@ function build(
       });
     }
 
+    initializeIDCounters();
     const vatParameters = m.unserialize(vatParametersCapData);
     baggage = collectionManager.provideBaggage();
 
@@ -1285,7 +1298,6 @@ function build(
   const unmeteredDispatch = meterControl.unmetered(dispatchToUserspace);
 
   async function bringOutYourDead() {
-    flushIDCounters();
     vom.flushCache();
     await gcTools.gcAndFinalize();
     const doMore = await scanForDeadObjects();
@@ -1293,6 +1305,14 @@ function build(
       return bringOutYourDead();
     }
     return undefined;
+  }
+
+  /**
+   * Do things that should be done (such as flushing caches to disk) after a
+   * dispatch has completed and user code has relinquished agency.
+   */
+  function afterDispatchActions() {
+    flushIDCounters();
   }
 
   /**
@@ -1344,11 +1364,14 @@ function build(
       // any promise it returns to fire.
       const p = Promise.resolve(delivery).then(unmeteredDispatch);
 
-      // Instead, we wait for userspace to become idle by draining the
-      // promise queue. We return 'p' so that any bugs in liveslots that
-      // cause an error during unmeteredDispatch will be reported to the
+      // Instead, we wait for userspace to become idle by draining the promise
+      // queue. We clean up and the return 'p' so that any bugs in liveslots
+      // that cause an error during unmeteredDispatch will be reported to the
       // supervisor (but only after userspace is idle).
-      return gcTools.waitUntilQuiescent().then(() => p);
+      return gcTools.waitUntilQuiescent().then(() => {
+        afterDispatchActions();
+        return p;
+      });
     }
   }
   harden(dispatch);
